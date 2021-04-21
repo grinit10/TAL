@@ -31,8 +31,8 @@ namespace Api
                     });
             });
             services.AddControllers();
-            services.AddTransient<IJsonDal, JsonDal>();
-            services.AddTransient<ISlotService, SlotService>();
+            services.AddScoped<IJsonDal, JsonDal>();
+            services.AddScoped<ISlotService, SlotService>();
             services.Configure<SlotConfig>(Configuration.GetSection("slotConfig"));
             services.Configure<JsonDataSource>(Configuration.GetSection("jsonDataSource"));
 

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Bl
 {
-    public class SlotService: ISlotService
+    public class SlotService : ISlotService
     {
         private readonly IJsonDal _jsonDal;
         private readonly SlotConfig _slotConfig;
@@ -27,22 +27,17 @@ namespace Bl
             var slots = GenerateSlots();
             var bookedSlots = await _jsonDal.LoadJson<List<BookedSlot>>(_jsonDataSource.BookedSlots);
             slots.ForEach(slot =>
-            {
-                if(bookedSlots.Exists(b => b.StartTimeHour == slot.StartTime.Hour && b.StartTimeMinute == slot.StartTime.Minute))
-                {
-                    slot.IsAvailable = false;
-                }
-            });
+                    slot.IsAvailable = !bookedSlots.Exists(b => 
+                        b.StartTimeHour == slot.StartTime.Hour && b.StartTimeMinute == slot.StartTime.Minute)
+            );
             return slots;
         }
 
         private List<TimeSlotModel> GenerateSlots()
         {
             var slots = new List<TimeSlotModel>();
-            var startTimeSpan = new TimeSpan(_slotConfig.StartSlotHour, _slotConfig.StartSlotMinute, 00);
-            var endTimeSpan = new TimeSpan(_slotConfig.EndSlotHour, _slotConfig.EndSlotMinute, 00);
-            var startTime = DateTime.Today.Add(startTimeSpan);
-            var endTime = DateTime.Today.Add(endTimeSpan);
+            var startTime = DateTime.Today.Add(new TimeSpan(_slotConfig.StartSlotHour, _slotConfig.StartSlotMinute, 00));
+            var endTime = DateTime.Today.Add(new TimeSpan(_slotConfig.EndSlotHour, _slotConfig.EndSlotMinute, 00));
 
             while (startTime <= endTime.Add(new TimeSpan(0, -_slotConfig.SlotDurationInMinutes, 00)))
             {
