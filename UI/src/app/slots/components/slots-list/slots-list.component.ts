@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
+import { Observable } from 'rxjs';
 import { TimeSlot } from 'src/app/shared/models/timeSlot.model';
 import { GetTimeSlotsResult } from 'src/app/store/timeSlots/actions/timeSlot.actions';
 
@@ -10,24 +11,20 @@ import { GetTimeSlotsResult } from 'src/app/store/timeSlots/actions/timeSlot.act
 })
 export class SlotsListComponent implements OnInit {
 
-  timeSlots: TimeSlot[] = [];
-  isLoading = false;
+  public timeSlots: Observable<TimeSlot[]>;
+  public isLoading: Observable<boolean>;
 
   constructor(public store: Store) {
-    this.store.select(state => state.timeSlot.items).subscribe((r: TimeSlot[]) => {
-      this.timeSlots = r;
-    });
+    this.timeSlots = this.store.select(state => state.timeSlot.items);
 
-    this.store.select(state => state.temperature.isLoading).subscribe((r: boolean) => {
-      this.isLoading = r;
-    });
-   }
+    this.isLoading = this.store.select(state => state.temperature.isLoading);
+  }
 
   ngOnInit(): void {
     this.store.dispatch(new GetTimeSlotsResult());
   }
 
   isSlotAvailable = (timeSlot: TimeSlot): boolean =>
-  timeSlot.isAvailable
+    timeSlot.isAvailable
 
 }

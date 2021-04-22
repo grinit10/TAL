@@ -1,5 +1,5 @@
-<mat-chip-list *ngIf='!isLoading'>
-    <mat-chip [disabled]='!isSlotAvailable(timeSlot)'  *ngFor="let timeSlot of timeSlots">
+<mat-chip-list *ngIf='!(isLoading | async)'>
+    <mat-chip [disabled]='!isSlotAvailable(timeSlot)'  *ngFor="let timeSlot of (timeSlots | async)">
         {{timeSlot.startTimeDisplay}}
     </mat-chip>
 </mat-chip-list>
